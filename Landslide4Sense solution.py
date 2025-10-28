@@ -10,8 +10,8 @@ import kagglehub
 
 
 # Testing the dataset 
-path_single = r"data/img/image_2000.h5"
-path_single_mask = r'data/mask/mask_2000.h5'
+path_single = r"data/TrainData/img/image_2000.h5"
+path_single_mask = r'data/TrainData/mask/mask_2000.h5'
 
 
 f_data = np.zeros((1, 128,128, 3))
@@ -36,9 +36,6 @@ with h5py.File(path_single) as hdf:
     plt.imshow(data_ndvi)
 
 
-# In[7]:
-
-
 with h5py.File(path_single_mask) as hdf:
     ls = list(hdf.keys())
     print("ls", ls)
@@ -46,16 +43,12 @@ with h5py.File(path_single_mask) as hdf:
     print("input data shape:", data.shape)
     plt.imshow(data)
 
-
 # # Using all dataset
 
-# In[8]:
-
-
-path_single = r"data/img/image_10.h5"
-path_single_mask = r'data/mask/mask_1.h5'
-TRAIN_PATH = r"data/img/*.h5"
-TRAIN_MASK = r'data/mask/*.h5'
+path_single = r"data/TrainData/img/image_10.h5"
+path_single_mask = r'data/TrainData/mask/mask_1.h5'
+TRAIN_PATH = r"data/TrainData/img/*.h5"
+TRAIN_MASK = r'data/TrainData/mask/*.h5'
 
 TRAIN_XX = np.zeros((3799, 128, 128, 6))
 TRAIN_YY = np.zeros((3799, 128, 128, 1))
@@ -63,18 +56,9 @@ all_train = sorted(glob.glob(TRAIN_PATH))
 all_mask = sorted(glob.glob(TRAIN_MASK))
 
 
-# ## Train with RGB, NDVI, DEM, and Slope 
-# 
-
-# In[9]:
-
-
+# ## Train with RGB, NDVI, DEM, and Slope
 import tensorflow as tf
 tf.test.gpu_device_name()
-
-
-# In[ ]:
-
 
 for i, (img, mask) in enumerate(zip(all_train, all_mask)):
     print(i, img, mask)
@@ -112,20 +96,12 @@ for i, (img, mask) in enumerate(zip(all_train, all_mask)):
 
 
 # ## Testing min, max values in train data
-
-# In[11]:
-
-
 # TRAIN_XX_n = TRAIN_XX / TRAIN_XX.max()
 TRAIN_XX[np.isnan(TRAIN_XX)] = 0.000001
 print(TRAIN_XX.min(), TRAIN_XX.max(), TRAIN_YY.min(), TRAIN_YY.max())
 
 
 # ## Custom loss function (Dice Loss)
-
-# In[12]:
-
-
 def dice_loss(y_true, y_pred):
   y_true = tf.cast(y_true, tf.float32)
   y_pred = tf.math.sigmoid(y_pred)
